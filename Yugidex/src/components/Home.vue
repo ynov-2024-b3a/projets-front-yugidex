@@ -9,13 +9,17 @@ interface Card {
 }
 
 const cards = ref<Card[]>([]);
-
+let numberOfCards = 12;
 async function fetchCards() {
   try {
-    cards.value = await cardsAPI.fetchCards();
+    cards.value = await cardsAPI.fetchCards(numberOfCards);
   } catch (error) {
     console.error('Error fetching cards:', error);
   }
+}
+function increaseNumberCards() {
+  numberOfCards += 4;
+  fetchCards();
 }
 
 onMounted(() => {
@@ -25,9 +29,24 @@ onMounted(() => {
 
 <template>
   <div>
-    <h1>Cartes Yu-Gi-Oh</h1>
-      <div v-for="card in cards.slice(0, 20)" :key="card.id">
-        <img :src="card.card_images[0].image_url" alt="Card Image" style="height: 30vh; width: 10vw;">
+    <h1 id="homeTitle">Cartes Yu-Gi-Oh!</h1>
+    <div id="searchbar">
+      <div class="search-container">
+        <img src="../assets/loupe.png" alt="Loupe" class="search-icon">
+        <input type="text" id="search" placeholder="Rechercher une carte">
       </div>
+    </div>
+    <div id="grid-cards">
+      <div v-for="card in cards" :key="card.id">
+        <a :href="`/${encodeURIComponent(card.name)}`">
+          <img :src="card.card_images[0].image_url" alt="Card Image" id="cards">
+        </a>
+      </div>
+    </div>
+    <div id="container">
+      <button id="buttonIncreaseNumberCards" @click="increaseNumberCards">
+        Charger plus de cartes
+      </button>
+    </div>
   </div>
 </template>

@@ -6,6 +6,7 @@
     <nav>
       <router-link to="/">Accueil</router-link>
       <router-link to="/about">A propos</router-link>
+      <router-link to="/booster">Mes Booster</router-link>
     </nav>
     <main>
       <router-view />

@@ -1,44 +1,103 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import cardsAPI from '@/api/cards';
 
 interface Card {
   id: number;
   name: string;
+  type: string;
+  race: string;
   card_images: { image_url: string }[];
 }
 
 const cards = ref<Card[]>([]);
 const searchQuery = ref('');
-const filteredCards = ref<Card[]>([]);
-let numberOfCards = 12;
+const numberOfCards = ref(12);
+const isLoading = ref(false);
+const searchOptions = ref({
+  searchByName: true,
+  searchByType: false,
+  searchByRace: false
+});
 
-async function fetchCards() {
+async function fetchAllCards() {
   try {
-    cards.value = await cardsAPI.fetchCards(numberOfCards);
-    filteredCards.value = cards.value;
+    isLoading.value = true;
+    const response = await cardsAPI.fetchAllCards();
+    cards.value = response;
+    isLoading.value = false;
   } catch (error) {
-    console.error('Error fetching cards:', error);
+    console.error('Error fetching all cards:', error);
+    isLoading.value = false;
   }
 }
 
-function increaseNumberCards() {
-  numberOfCards += 4;
-  fetchCards();
+async function fetchInitialCards() {
+  try {
+    isLoading.value = true;
+    const initialCards = await cardsAPI.fetchCards(numberOfCards.value);
+    filteredCards.value = initialCards;
+    isLoading.value = false;
+  } catch (error) {
+    console.error('Error fetching initial cards:', error);
+    isLoading.value = false;
+  }
 }
 
-function searchCards() {
-  if (!searchQuery.value) {
-    filteredCards.value = cards.value;
-  } else {
-    filteredCards.value = cards.value.filter(card => 
-      card.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+const filteredCards = ref<Card[]>([]);
+const searchResults = computed(() => {
+  if (!searchQuery.value) return [];
+
+  const query = searchQuery.value.toLowerCase().trim();
+
+  return cards.value.filter(card => {
+    const matchName = searchOptions.value.searchByName 
+      && card.name.toLowerCase().includes(query);
+    
+    const matchType = searchOptions.value.searchByType 
+      && card.type.toLowerCase().includes(query);
+    
+    const matchRace = searchOptions.value.searchByRace 
+      && card.race.toLowerCase().includes(query);
+
+    return matchName || matchType || matchRace;
+  });
+});
+
+function loadMoreResults() {
+  if (searchQuery.value) {
+    const currentLength = filteredCards.value.length;
+    const moreResults = searchResults.value.slice(
+      currentLength, 
+      currentLength + numberOfCards.value
     );
+    filteredCards.value = [...filteredCards.value, ...moreResults];
+  } else {
+    numberOfCards.value += 4;
+    fetchInitialCards();
+  }
+}
+
+function toggleSearchOption(option: keyof typeof searchOptions.value) {
+  searchOptions.value[option] = !searchOptions.value[option];
+  
+  const hasActiveOption = Object.values(searchOptions.value).some(value => value);
+  if (!hasActiveOption) {
+    searchOptions.value.searchByName = true;
+  }
+}
+
+function performSearch() {
+  if (!searchQuery.value) {
+    fetchInitialCards();
+  } else {
+    filteredCards.value = searchResults.value.slice(0, numberOfCards.value);
   }
 }
 
 onMounted(() => {
-  fetchCards();
+  fetchInitialCards();
+  fetchAllCards();
 });
 </script>
 
@@ -54,12 +113,51 @@ onMounted(() => {
           class="search-input" 
           placeholder="Rechercher une carte"
           v-model="searchQuery"
-          @input="searchCards"
+          @input="performSearch"
         >
+      </div>
+
+      <div class="search-options">
+        <label>
+          <input 
+            type="checkbox" 
+            :checked="searchOptions.searchByName"
+            @change="toggleSearchOption('searchByName')"
+          >
+          Nom
+        </label>
+        <label>
+          <input 
+            type="checkbox" 
+            :checked="searchOptions.searchByType"
+            @change="toggleSearchOption('searchByType')"
+          >
+          Type
+        </label>
+        <label>
+          <input 
+            type="checkbox" 
+            :checked="searchOptions.searchByRace"
+            @change="toggleSearchOption('searchByRace')"
+          >
+          Race
+        </label>
+      </div>
+
+      <div v-if="searchQuery" class="search-results-info">
+        {{ searchResults.length }} résultats trouvés
       </div>
     </div>
     
-    <div class="card-grid">
+    <div v-if="isLoading" class="loading-spinner">
+      Chargement...
+    </div>
+    
+    <div v-else-if="filteredCards.length === 0" class="no-results">
+      Aucune carte trouvée
+    </div>
+    
+    <div v-else class="card-grid">
       <div v-for="card in filteredCards" :key="card.id" class="card-item">
         <router-link :to="`/card/${encodeURIComponent(card.name)}`" class="card-link">
           <div class="card-image-container">
@@ -73,12 +171,12 @@ onMounted(() => {
       </div>
     </div>
     
-    <div class="load-more-container">
+    <div class="load-more-container" v-if="searchQuery ? searchResults.length > filteredCards.length : true">
       <button 
         class="load-more-button" 
-        @click="increaseNumberCards"
+        @click="loadMoreResults"
       >
-        Charger plus de cartes
+        {{ searchQuery ? 'Plus de résultats' : 'Charger plus de cartes' }}
       </button>
     </div>
   </div>
@@ -101,9 +199,10 @@ onMounted(() => {
 }
 
 .searchbar {
-  width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   margin-bottom: 20px;
 }
 
@@ -111,6 +210,42 @@ onMounted(() => {
   position: relative;
   width: 80%;
   max-width: 500px;
+  margin: 0 auto;
+}
+
+.search-options {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.search-options label {
+  display: flex;
+  align-items: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  color: #333;
+}
+
+.search-options input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.search-results-info {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  margin-top: 10px;
+  color: #666;
+}
+
+.loading-spinner, .no-results {
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  margin-top: 20px;
+  color: #666;
 }
 
 .search-icon {

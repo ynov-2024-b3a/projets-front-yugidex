@@ -8,6 +8,16 @@ const apiClient = axios.create({
 });
 
 export default {
+  async fetchAllCards() {
+    try {
+      const response = await apiClient.get<{ data: [] }>('/cardinfo.php?num=10000&offset=0&language=fr');
+      return response.data.data;
+    } catch (error) {
+      console.error('Error fetching all cards:', error);
+      throw error;
+    }
+  },
+
   async fetchCards(numberOfCards: number) {
     try {
       const response = await apiClient.get<{ data: [] }>(`/cardinfo.php?num=${numberOfCards}&offset=0&language=fr`);

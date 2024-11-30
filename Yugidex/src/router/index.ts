@@ -15,6 +15,12 @@ const router = createRouter({
       component: () => import('../views/CardDetailsView.vue'),
       props: true,
     },
+    {
+      path: '/Booster',
+      name: 'Booster',
+      component: () => import('../views/BoosterView.vue'),
+      props: true,
+    },
   ],
 })
 

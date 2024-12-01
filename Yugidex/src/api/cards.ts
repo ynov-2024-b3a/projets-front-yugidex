@@ -53,4 +53,15 @@ export default {
       throw error;
     }
   },
+  async  fetchCardsBySetName(setName: string): Promise<Card[]> {
+    try {
+      const response = await axios.get(
+        `https://db.ygoprodeck.com/api/v7/cardinfo.php?cardset=${encodeURIComponent(setName)}`
+      );
+      return response.data.data; // Retourne les cartes
+    } catch (error) {
+      console.error(`Erreur lors de la récupération des cartes pour le set ${setName}:`, error);
+      throw error;
+    }
+  }
 };

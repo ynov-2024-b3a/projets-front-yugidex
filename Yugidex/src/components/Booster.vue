@@ -1,39 +1,89 @@
 <template>
-    <div class="packs-container">
-    <div v-for="set in selectedSets" :key="set.set_code" class="pack-item">
-      <div class="card-image-container">
-        <img :src="set.set_image" :alt="set.set_name" />
+  <div>
+    <!-- Afficher les boosters -->
+    <div v-if="!selectedBooster">
+      <h2>Choisissez un booster :</h2>
+      <div class="packs-container">
+        <div v-for="set in selectedSets" :key="set.set_code" class="pack-item" @click="selectBooster(set)">
+          <div class="card-image-container">
+            <img :src="set.set_image" :alt="set.set_name" />
+          </div>
+          <p>{{ set.set_name }}</p>
+        </div>
       </div>
-      <p>{{ set.set_name }}</p>
-      
+    </div>
+
+    <!-- Afficher les cartes du booster sélectionné -->
+    <div v-else>
+      <button @click="resetSelection">Retour</button>
+      <h2>Cartes du booster : {{ selectedBooster.set_name }}</h2>
+      <div class="cards-container">
+        <div v-for="card in cards" :key="card.id" class="card-item">
+          <img :src="card.card_images[0].image_url" :alt="card.name" />
+          
+        </div>
+      </div>
     </div>
   </div>
-  </template>
-  
-  <script setup lang="ts">
-  
-  import { ref, onMounted } from 'vue';
-  import api from '@/api/cards'; // Assure-toi d'importer ton module API
-  interface CardSet {
+</template>
+
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import api from '@/api/cards'; // Module API
+
+interface CardSet {
   set_name: string;
   set_code: string;
-  num_of_cards: number;
-  tcg_date: string;
   set_image: string;
 }
-const selectedSets = ref<CardSet[]>([]); // Référence pour stocker les packs sélectionnés
-const setCodes = ['MP14', 'MP15', 'MP16','MP17','MP18','MP19']; // Liste des codes des packs à récupérer
 
+interface Card {
+  id: number;
+  name: string;
+  card_images: { image_url: string }[];
+}
+
+const selectedSets = ref<CardSet[]>([]); // Liste des boosters
+const selectedBooster = ref<CardSet | null>(null); // Booster sélectionné
+const cards = ref<Card[]>([]); // Cartes du booster sélectionné
+
+const setCodes = ['MP14', 'MP15', 'MP16', 'MP17', 'MP18']; // Liste des codes de boosters
+
+// Charger les boosters
 onMounted(async () => {
   try {
-    // Récupère plusieurs packs
     selectedSets.value = await api.fetchCardSetsByCodes(setCodes);
-    console.log('Packs sélectionnés :', selectedSets.value); // Vérifie les données
   } catch (error) {
-    console.error('Erreur lors du chargement des packs:', error);
+    console.error('Erreur lors du chargement des boosters :', error);
   }
 });
+
+// Sélectionner un booster
+const selectBooster = async (booster: CardSet) => {
+  selectedBooster.value = booster;
+  try {
+    // Récupérer les cartes du booster sélectionné
+    const allCards = await api.fetchCardsBySetName(booster.set_name);
+    cards.value = getRandomCards(allCards, 5); // Obtenir 5 cartes aléatoires
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cartes :', error);
+  }
+};
+
+// Réinitialiser la sélection
+const resetSelection = () => {
+  selectedBooster.value = null;
+  cards.value = [];
+};
+
+// Obtenir des cartes aléatoires
+const getRandomCards = (allCards: Card[], count: number): Card[] => {
+  const shuffled = [...allCards].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
 </script>
+
   
   
   <style scoped>
@@ -108,6 +158,52 @@ onMounted(async () => {
   padding: 16px; /* Ajoute de l'espace intérieur */
   border-radius: 8px; /* Arrondit les coins */
   background-color: #f9f9f9; /* Ajoute un fond léger */
+}
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Conteneur pour chaque carte */
+.card-item {
+  width: 100px; /* Largeur fixe pour chaque carte */
+  text-align: center;
+}
+
+/* Image de chaque carte */
+.card-item img {
+  width: 100%;
+  height: 150px; /* Hauteur fixe pour les cartes */
+  object-fit: cover; /* Assure que l'image conserve son ratio sans déformation */
+}
+
+/* Style pour chaque bouton de booster */
+.pack-item {
+  width: 120px; /* Largeur fixe pour chaque booster */
+  text-align: center;
+}
+
+.pack-item img {
+  width: 100%;
+  height: auto;
+}
+
+/* Bouton pour ouvrir le booster */
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
 }
   </style>
   

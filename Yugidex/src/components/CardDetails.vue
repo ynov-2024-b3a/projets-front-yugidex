@@ -33,6 +33,10 @@ interface CardDetail {
 const cardDetail = ref<CardDetail | null>(null);
 const isLoading = ref(true);
 
+/*
+  Récupére les détails de la carte en utilisant l'API et mettre à jour les états de chargements.
+*/
+
 async function fetchCardDetails() {
   try {
     cardDetail.value = await cardsAPI.fetchCardByName(cardName);
@@ -42,6 +46,10 @@ async function fetchCardDetails() {
     isLoading.value = false;
   }
 }
+
+/*
+  Retourne l'image correspondant à l'attribut de la carte. En cas d'erreur, une image par défaut est retournée.
+*/
 
 function getCardAttributeImage(attribute: string) {
   try {
@@ -59,11 +67,13 @@ onMounted(() => {
 <template>
   <div class="pokedex-container">
     <div class="pokedex-frame">
+      <!-- Écran de chargement lors de la récupération des données -->
       <div class="pokedex-screen">
         <div v-if="isLoading" class="loading-screen">
           <div class="loading-spinner"></div>
         </div>
         
+        <!-- Section affichant les détails de la carte -->
         <div v-else-if="cardDetail" class="card-details">
           <div class="screen-header">
             <h1 class="card-name">{{ cardDetail.name }}</h1>

@@ -10,6 +10,7 @@
           <router-link to="/" class="nav-link">Accueil</router-link>
           <router-link to="/about" class="nav-link">A propos</router-link>
           <router-link to="/Booster" class="nav-link">Booster</router-link>
+          <router-link to="/Inventaire" class="nav-link">Inventaire</router-link>
         </nav>
         
         <main class="pokedex-main">

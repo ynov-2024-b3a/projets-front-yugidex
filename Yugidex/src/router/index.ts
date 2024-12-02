@@ -21,6 +21,12 @@ const router = createRouter({
       component: () => import('../views/BoosterView.vue'),
       props: true,
     },
+    {
+      path: '/Inventaire',
+      name: 'Inventaire',
+      component: () => import('../views/InventaireView.vue'),
+      props: true,
+    },
   ],
 })
 

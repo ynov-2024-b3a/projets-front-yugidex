@@ -20,17 +20,16 @@
       <div class="cards-container">
         <div v-for="card in cards" :key="card.id" class="card-item">
           <img :src="card.card_images[0].image_url" :alt="card.name" />
-          
         </div>
       </div>
     </div>
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import api from '@/api/cards'; // Module API
+import { useRouter } from 'vue-router';
+import api from '@/api/cards';
 
 interface CardSet {
   set_name: string;
@@ -44,6 +43,7 @@ interface Card {
   card_images: { image_url: string }[];
 }
 
+const router = useRouter(); // Initialiser le router
 const selectedSets = ref<CardSet[]>([]); // Liste des boosters
 const selectedBooster = ref<CardSet | null>(null); // Booster sélectionné
 const cards = ref<Card[]>([]); // Cartes du booster sélectionné
@@ -65,7 +65,13 @@ const selectBooster = async (booster: CardSet) => {
   try {
     // Récupérer les cartes du booster sélectionné
     const allCards = await api.fetchCardsBySetName(booster.set_name);
-    cards.value = getRandomCards(allCards, 5); // Obtenir 5 cartes aléatoires
+    const randomCards = getRandomCards(allCards, 5); // Obtenir 5 cartes aléatoires
+
+    // Ajouter les nouvelles cartes à l'inventaire
+    updateInventory(randomCards);
+
+    // Mettre à jour les cartes affichées
+    cards.value = randomCards;
   } catch (error) {
     console.error('Erreur lors de la récupération des cartes :', error);
   }
@@ -82,6 +88,17 @@ const getRandomCards = (allCards: Card[], count: number): Card[] => {
   const shuffled = [...allCards].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 };
+
+// Ajouter des cartes à l'inventaire dans localStorage
+const updateInventory = (newCards: Card[]) => {
+  const inventory = JSON.parse(localStorage.getItem('inventory') || '[]') as Card[];
+  const updatedInventory = [...inventory, ...newCards];
+  localStorage.setItem('inventory', JSON.stringify(updatedInventory));
+};
+
+// Naviguer vers Inventaire
+
+
 </script>
 
   

@@ -20,6 +20,10 @@ const searchOptions = ref({
   searchByRace: false
 });
 
+/*
+  Récupération de toutes les cartes.
+*/
+
 async function fetchAllCards() {
   try {
     isLoading.value = true;
@@ -31,6 +35,10 @@ async function fetchAllCards() {
     isLoading.value = false;
   }
 }
+
+/*
+  Récupération d'un nombre limité de cartes pour l'affichage initial.
+*/
 
 async function fetchInitialCards() {
   try {
@@ -45,6 +53,11 @@ async function fetchInitialCards() {
 }
 
 const filteredCards = ref<Card[]>([]);
+
+/*
+  Filtre les cartes en fonction de la requête utilisateur et des options actives.
+*/
+
 const searchResults = computed(() => {
   if (!searchQuery.value) return [];
 
@@ -64,6 +77,10 @@ const searchResults = computed(() => {
   });
 });
 
+/*
+  Charge plus de résultats selon la requête de recherche ou la pagination.
+*/
+
 function loadMoreResults() {
   if (searchQuery.value) {
     const currentLength = filteredCards.value.length;
@@ -78,6 +95,10 @@ function loadMoreResults() {
   }
 }
 
+/*
+  Active ou désactive une option de recherche.
+*/
+
 function toggleSearchOption(option: keyof typeof searchOptions.value) {
   searchOptions.value[option] = !searchOptions.value[option];
   
@@ -86,6 +107,10 @@ function toggleSearchOption(option: keyof typeof searchOptions.value) {
     searchOptions.value.searchByName = true;
   }
 }
+
+/*
+  Exécute une recherche ou réinitialise les cartes si aucune requête n'est saisie.
+*/
 
 function performSearch() {
   if (!searchQuery.value) {

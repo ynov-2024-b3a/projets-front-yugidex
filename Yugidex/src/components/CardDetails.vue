@@ -281,8 +281,6 @@ onMounted(() => {
   padding: 10px;
 }
 
-
-
 .error-message {
   display: flex;
   justify-content: center;

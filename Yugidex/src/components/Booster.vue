@@ -19,7 +19,9 @@
       <h2>Cartes du booster : {{ selectedBooster.set_name }}</h2>
       <div class="cards-container">
         <div v-for="card in cards" :key="card.id" class="card-item">
-          <img :src="card.card_images[0].image_url" :alt="card.name" />
+          <router-link :to="`/card/${encodeURIComponent(card.name)}`" class="card-link">
+            <img :src="card.card_images[0].image_url" :alt="card.name" />
+          </router-link>
         </div>
       </div>
     </div>
@@ -188,6 +190,10 @@ const updateInventory = (newCards: Card[]) => {
 .card-item {
   width: 100px; /* Largeur fixe pour chaque carte */
   text-align: center;
+}
+
+.card-link {
+  text-decoration: none;
 }
 
 /* Image de chaque carte */

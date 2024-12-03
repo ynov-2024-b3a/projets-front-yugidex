@@ -29,15 +29,15 @@ const resetInventory = () => {
       
       <div class="card-grid">
         <div v-for="card in inventory" :key="card.id" class="card-item">
-            
-          <div class="card-image-container">
-            <img 
-              :src="card.card_images[0].image_url" 
-              :alt="card.name" 
-              class="card-image" 
-            />
-          </div>
-          
+          <router-link :to="`/card/${encodeURIComponent(card.name)}`" class="card-link">
+            <div class="card-image-container">
+              <img 
+                :src="card.card_images[0].image_url" 
+                :alt="card.name" 
+                class="card-image" 
+              />
+            </div>
+          </router-link>
         </div>
       </div>
       
@@ -105,6 +105,10 @@ const resetInventory = () => {
   font-family: 'Press Start 2P', cursive;
   font-size: 0.8rem;
   margin-top: 10px;
+}
+
+.card-link {
+  text-decoration: none;
 }
 
 .actions-container {

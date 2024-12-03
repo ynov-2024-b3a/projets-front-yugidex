@@ -44,7 +44,7 @@ export default {
   async  fetchCardsBySetName(setName: string): Promise<Card[]> {
     try {
       const response = await axios.get(
-        `https://db.ygoprodeck.com/api/v7/cardinfo.php?cardset=${encodeURIComponent(setName)}`
+        `https://db.ygoprodeck.com/api/v7/cardinfo.php?cardset=${encodeURIComponent(setName)}&language=fr`
       );
       return response.data.data; // Retourne les cartes
     } catch (error) {

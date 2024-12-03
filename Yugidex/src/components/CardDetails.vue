@@ -147,6 +147,9 @@ onMounted(() => {
             </div>
           </div>
         </div>
+        <div v-else class="error-message">
+          <p>La carte demandée n'est pas disponible en français.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -287,4 +290,16 @@ onMounted(() => {
   border-radius: 5px;
   padding: 10px;
 }
+
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  color: #f0f0f0;
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
 </style>

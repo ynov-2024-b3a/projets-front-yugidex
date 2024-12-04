@@ -70,6 +70,7 @@ Bienvenue dans **Yu-Gi-Dex**, un projet visant à offrir un répertoire interact
 - Implémentation d'une boutique.
 - Mode combat contre une IA avec les cartes obtenues.
 - Comparateur de cartes.
+- Animations de l'ouverture des boosters.
 
 ---
 

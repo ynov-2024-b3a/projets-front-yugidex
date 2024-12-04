@@ -142,6 +142,10 @@ const updateInventory = (newCards: Card[]) => {
 </template>
   
 <style scoped>
+.card-image-container:hover img {
+  transform: scale(1.1); /* Zoom sur l'image au survol */
+}
+
 /* Base card styles */
 .card-item {
   position: relative;

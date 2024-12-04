@@ -81,4 +81,4 @@ Les données des cartes sont récupérées via l'API publique YGOProDeck API. Me
 
 ## 📜 Licence
 
-Ce projet est sous licence MIT. Consultez le fichier [de licence MIT](./LICENSE) pour plus de détails.
+Ce projet est sous licence MIT. Consultez le fichier [licence MIT](./LICENSE) pour plus de détails.

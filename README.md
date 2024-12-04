@@ -45,20 +45,22 @@ Bienvenue dans **Yu-Gi-Dex**, un projet visant à offrir un répertoire interact
 
 ## 📦 Structure du Projet
 
-Yugidex/
-├── public/                # Assets publics
-├── src/
-│   ├── assets/            # Images, icônes et styles
-│   ├── components/        # Composants Vue.js
-│   ├── views/             # Pages Vue.js (ex. HomeView, CarteDetailsView)
-│   ├── router/            # Définition des routes
-│   ├── store/             # Gestion d'état avec Vuex (ou Pinia)
-│   ├── services/          # Appels API et gestion des données
-│   ├── App.vue            # Composant principal
-│   └── main.ts            # Point d'entrée de l'application
-├── README.md              # Documentation du projet
-├── package.json           # Dépendances et scripts
-└── vite.config.ts         # Configuration Vite.ts
+   ```bash
+   Yugidex/
+   ├── public/                # Assets publics
+   ├── src/
+   │   ├── assets/            # Images, icônes et styles
+   │   ├── components/        # Composants Vue.js
+   │   ├── views/             # Pages Vue.js (ex. HomeView, CarteDetailsView)
+   │   ├── router/            # Définition des routes
+   │   ├── store/             # Gestion d'état avec Vuex (ou Pinia)
+   │   ├── services/          # Appels API et gestion des données
+   │   ├── App.vue            # Composant principal
+   │   └── main.ts            # Point d'entrée de l'application
+   ├── README.md              # Documentation du projet
+   ├── package.json           # Dépendances et scripts
+   └── vite.config.ts         # Configuration Vite.ts
+   ```
 
 ---
 
@@ -73,7 +75,7 @@ Yugidex/
 
 ## 📖 Sources de données
 
-Les données des cartes sont récupérées via l'API publique YGOProDeck API. Merci de consulter leur documentation pour en savoir plus en cliquant (ici)[https://ygoprodeck.com/api-guide].
+Les données des cartes sont récupérées via l'API publique YGOProDeck API. Merci de consulter leur documentation pour en savoir plus en cliquant [ici](https://ygoprodeck.com/api-guide).
 
 ---
 

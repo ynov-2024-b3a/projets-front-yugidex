@@ -177,6 +177,7 @@ const updateInventory = (newCards: Card[]) => {
   padding: 16px; /* Ajoute de l'espace intérieur */
   border-radius: 8px; /* Arrondit les coins */
   background-color: #f9f9f9; /* Ajoute un fond léger */
+  color: #333; /* Couleur du texte */
 }
 .cards-container {
   display: flex;
